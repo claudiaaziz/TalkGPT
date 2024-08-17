@@ -15,7 +15,7 @@ interface VoiceRecognitionState {
 	isRecording: boolean;
 }
 
-const useVoiceRecognition = () => {
+export const useVoiceRecognition = () => {
 	const [voiceState, setVoiceState] = useState<VoiceRecognitionState>({
 		recognized: '',
 		pitchLevel: '',

@@ -23,6 +23,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "@react-native-voice/voice",
+        {
+          "microphonePermission": "Allow TalkGPT to access the microphone",
+          "speechRecognitionPermission": "Allow TalkGPT to securely recognize user speech"
+        }
+      ]
+    ]
   }
 }
