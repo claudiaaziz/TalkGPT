@@ -54,3 +54,5 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+ageless-talent-427221-q1-f32b38d1a1f1.json
