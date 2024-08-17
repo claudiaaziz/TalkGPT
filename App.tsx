@@ -6,6 +6,7 @@ import { fetchAudio } from './utils/fetchAudio';
 import * as FileSystem from 'expo-file-system';
 import { Audio } from 'expo-av';
 import { writeAudioToFile } from './utils/writeAudioToFile';
+import { playFromPath } from './utils/playFromPath';
 
 Audio.setAudioModeAsync({
 	allowsRecordingIOS: true,
@@ -26,6 +27,23 @@ export default function App() {
 	const [borderColor, setBorderColor] = useState<'lightgray' | 'lightgreen'>(
 		'lightgray'
 	);
+	const [lastResponse, setLastResponse] = useState('');
+
+	const listFiles = async () => {
+		try {
+			const result = await FileSystem.readAsStringAsync(
+				FileSystem.documentDirectory!
+			);
+
+			if (result.length > 0) {
+				const fileName = result[0];
+				const path = FileSystem.documentDirectory + fileName;
+				setLastResponse(path);
+			}
+		} catch (e) {
+			console.error(e);
+		}
+	};
 
 	const handleSubmit = async () => {
 		if (!voiceState.transcriptionResults[0]) return;
@@ -34,13 +52,23 @@ export default function App() {
 			const audioBlob = await fetchAudio(
 				voiceState.transcriptionResults[0]
 			);
+
 			const reader = new FileReader();
 			reader.onload = async (e) => {
 				if (e.target && typeof e.target.result === 'string') {
+                    // save audio
 					const audioData = e.target.result.split(',')[1];
 					const path = await writeAudioToFile(audioData);
+					setLastResponse(path);
+
+					// play audio
+					await playFromPath(path);
+
+					destroyRecognition();
 				}
 			};
+
+			reader.readAsDataURL(audioBlob);
 		} catch (e) {
 			console.error(e);
 		}
@@ -66,11 +94,15 @@ export default function App() {
 				onPressOut={() => {
 					setBorderColor('lightgray');
 					stopRecognition();
+					handleSubmit();
 				}}
 			>
 				<Text>Hold to speak</Text>
 			</Pressable>
-			{/* <Button title='Replay last message' onPress={() => {}} /> */}
+			<Button
+				title='Replay last response'
+				onPress={async () => await playFromPath(lastResponse)}
+			/>
 		</View>
 	);
 }
