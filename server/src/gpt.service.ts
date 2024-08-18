@@ -23,7 +23,7 @@ export class ChatService {
 			content,
 		});
 		const chatCompletion = await this.openai.chat.completions.create({
-			messages: [
+			messages: [ 
 				{ role: 'user', content: 'You are a helpful assistant' },
 				...this.conversationHistory,
 			],
